@@ -1,0 +1,3 @@
+此仓库会上传一些用python写的有趣的小东西，并不会局限于pygame模块
+DATE:2018-12-11
+AUTHOR:LINGYIN
