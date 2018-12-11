@@ -1,0 +1,227 @@
+'''
+Date:2018-12-08
+Reference:https://www.pygame.org/docs/tut/ChimpLineByLine.html
+Author:Lingyin
+
+本程序是pygame官网上的例子，用来学习pygame模块使用
+'''
+
+#导入所需的模块
+import os,sys
+import pygame
+
+#如果没有下面这条语句也是可以的，但是官网上的例子给出了，我也不知道有什么作用，避免出错？
+from pygame.locals import *
+
+#模块加载失败检查
+#字体模块未加载成功
+if not pygame.font:
+	print('Warning,fonts disabled')
+
+#声音模块未加载成功
+if not pygame.mixer:
+	print('Warning,sound desabled')
+
+
+#加载图片资源
+def load_image(name,colorkey=None):
+	#完整的路径名，可跨平台使用
+	#本实例图片资源放于data子文件夹下
+	fullname = os.path.join('data',name)
+
+	try:
+		image = pygame.image.load(fullname)
+	except pygame.error as e:
+		raise e
+
+	#很重要的函数调用，这将创建一个新的表面副本，并转换其颜色格式和深度以匹配显示。
+	image = image.convert()
+
+
+	'''
+
+	最后，我们设置图像的colorkey。如果用户为colorkey参数提供了一个参数，我们将该值用作图像的colorkey。
+	这通常只是一个颜色RGB值，比如(255、255、255)表示白色。您还可以传递一个值-1作为colorkey。
+	在这种情况下，函数将查找图像左上角像素处的颜色，并使用该颜色作为colorkey。
+
+	'''
+	if not colorkey:
+		if colorkey == -1:
+			colorkey = image.get_at((0,0))
+		image.set_colorkey(colorkey,RLEACCEL)
+	return image,image.get_rect()
+
+
+
+#加载声音
+
+def load_sound(name):
+	class NoneSound():
+		def play(self):
+			pass
+	#如果声音模块加载失败，会返回一个什么也不做的NoneSound类，不会影响游戏的运行
+	if not pygame.mixer:
+		return NoneSound()
+
+	fullname = os.path.join('data',name)
+
+	try:
+		sound = pygame.mixer.Sound(fullname)
+
+	except pygame.error as e:
+		raise e
+
+	return sound
+
+
+
+#拳头类，继承自pygame.sprite.Sprite
+class Fist(pygame.sprite.Sprite):
+	def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.image,self.rect = load_image('fist.bmp',-1)
+
+		#拳头的状态,0为未出拳
+		self.punching = 0
+
+
+	#更新拳头位置
+	def update(self):
+
+		#获取鼠标的坐标，并赋值给fist的midtop
+		pos = pygame.mouse.get_pos()
+		self.rect.midtop = pos
+		if self.punching:
+			self.rect.move_ip(5,10)
+
+
+	#出拳
+	def punch(self,target):
+		if not self.punching:
+			self.punching = 1
+			hitbox = self.rect.inflate(-5,-5)
+			#返回出拳是否击中target
+			return hitbox.colliderect(target.rect)
+
+	#收拳
+	def unpunch(self):
+		self.punching = 0
+
+#chimp类
+class Chimp(pygame.sprite.Sprite):
+	def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.image,self.rect = load_image('chimp.bmp',-1)
+		screen = pygame.display.get_surface()
+		self.area = screen.get_rect()
+		self.rect.topleft = 10,10
+		#chimp的移动速度
+		self.move = 2
+		#昏厥状态
+		self.dizzy = 0
+
+
+	def update(self):
+		if self.dizzy:
+			self._spin()
+		else:
+			self._walk()
+
+
+
+	def _walk(self):
+		newpos = self.rect.move((self.move,0))
+		if not self.area.contains(newpos):
+			if self.rect.left < self.area.left or self.rect.right > self.area.right:
+				self.move = -self.move
+
+				newpos = self.rect.move((self.move,0))
+				#镜像
+				self.image = pygame.transform.flip(self.image,1,0)
+			self.rect = newpos
+
+	def _spin(self):
+		center = self.rect.center
+		self.dizzy = self.dizzy + 12
+		if self.dizzy >= 360:
+			self.dizzy = 0
+			self.image = self.original
+		else:
+			rotate = pygame.transform.rotate
+			self.image = rotate(self.original,self.dizzy)
+		self.rect = self.image.get_rect(center=center)
+
+	def punched(self):
+		if not self.dizzy:
+			self.dizzy = 1
+			self.original = self.image
+
+
+def main():
+	pygame.init()
+
+	screen = pygame.display.set_mode((468,60))
+	pygame.display.set_caption('fisting chimp')
+	#设置鼠标光标不可见
+	pygame.mouse.set_visible(0)
+
+	#创建背景
+	background = pygame.Surface(screen.get_size())
+	background = background.convert()
+	background.fill((250,250,250))
+
+
+
+	if pygame.font:
+	    font = pygame.font.Font(None,36)
+	    text = font.render("Pummel The Chimp, And Win $$$", 1, (10, 10, 10))
+	    textpos = text.get_rect(centerx=background.get_width()/2)
+	    background.blit(text, textpos)
+
+
+	screen.blit(background,(0,0))
+	pygame.display.flip()
+
+	#准备游戏对象
+	clock = pygame.time.Clock()	#游戏帧，确保游戏精灵不会运动的太快
+	whiff_sound = load_sound('whiff.wav')
+	punch_sound = load_sound('punch.wav')
+
+	#实例
+	chimp = Chimp()
+	fist = Fist()
+
+	allsprites = pygame.sprite.RenderPlain((fist,chimp))
+
+
+	#控制游戏运行的flag
+	going = True
+	while going:
+		clock.tick(50)
+
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				going = False
+			elif event.type == KEYDOWN and event.key == K_ESCAPE:
+				going = False
+			elif event.type == MOUSEBUTTONDOWN:
+				#当点击鼠标时，执行punch()
+				if fist.punch(chimp):
+					punch_sound.play()
+					chimp.punched()
+				else:
+					whiff_sound.play()
+			elif event.type == MOUSEBUTTONUP:
+				fist.unpunch()
+		allsprites.update()
+
+		screen.blit(background,(0,0))
+		allsprites.draw(screen)
+		pygame.display.flip()
+	pygame.quit()
+
+
+
+
+if __name__ == '__main__':
+	main()

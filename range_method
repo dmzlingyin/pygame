@@ -1,0 +1,8 @@
+print("List generated using step : " +str(list(range(3, 10, 2))))  
+
+print("List generated using negative step : " +str(list(range(10, -5, -3)))) 
+
+print("List generated using step, value contraints fail : " + str(list(range(10, -5, 3)))) 
+  
+ 
+print("List generated using 0 step : " + str(list(range(3, 7, 0)))) 
