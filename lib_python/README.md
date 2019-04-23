@@ -11,7 +11,7 @@ https://github.com/sczhengyabin/Image-Downloader
 
 2、各大视频网站爬虫
 
-地址：https://github.com/iawia002/annie
+https://github.com/iawia002/annie
 
    由ID为iawia002的用户整理，Annie是一款以go语言编码的视频下载工具，使用便捷并支持youtube，腾讯视频，抖音等多个网站视频和图像的下载，收录站点如下，可以说是该有的都有的：
 
