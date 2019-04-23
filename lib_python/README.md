@@ -2,6 +2,9 @@ python库收集
 
 此文件夹收录了一些python的有用的，好玩的库
 
+知乎，整理的很全
+https://www.zhihu.com/question/24590883/answer/652463850
+
 1.Google，Baidu，Bing三大搜素引擎图片爬虫
 
 https://github.com/sczhengyabin/Image-Downloader
@@ -20,5 +23,15 @@ https://github.com/iawia002/annie
 https://github.com/littlecodersh/itchat
 
    提供丰富的API,可以方便的获取消息，好友，群聊，公众号的各个详细信息．
+   
+
+4．bypy
+
+https://github.com/houtianze/bypy
+
+   百度网盘python客户端
+   
+   
+   
 
 
