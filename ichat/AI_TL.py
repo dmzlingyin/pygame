@@ -23,10 +23,10 @@ FIRST = True
 
 
 # 登录成功后的回调函数
-def qc(uuid,status,qrcode):
-    itchat.get_QR()
-    os.popen('python3 fj_mail.py')
-    itchat.send('你的微信在wed端登录！','filehelper')
+# def qc(uuid,status,qrcode):
+#     itchat.get_QR()
+#     os.popen('python3 fj_mail.py')
+#     itchat.send('你的微信在wed端登录！','filehelper')
     
 
 
@@ -82,7 +82,7 @@ def tuling_reply(msg):
 # 登录
 
 
-itchat.auto_login(hotReload=True,qrCallback=qc)
+itchat.auto_login(hotReload=True)
 
 
 
