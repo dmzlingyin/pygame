@@ -1,6 +1,6 @@
 python库收集
 
-此文件夹收录了一些python的有用的，好玩的库
+此文件夹收录了一些python的有用的，好玩的库和项目
 
 知乎，整理的很全
 https://www.zhihu.com/question/24590883/answer/652463850
