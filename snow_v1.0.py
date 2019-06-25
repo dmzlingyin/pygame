@@ -1,5 +1,5 @@
 '''
-人工降雪
+人工降雪v1.0
 Data:2018-12-09
 Author:Lingyin
 reference:https://mp.weixin.qq.com/s/fki-eGBzrSsz2xDbk--vpw
