@@ -157,7 +157,7 @@ def main():
 		hits = pygame.sprite.spritecollide(player,mobs,False)
 		if hits:
 			running = False
-		
+			
 		all_sprite.update()
 		screen.blit(background,(0,0))
 		all_sprite.draw(screen)
